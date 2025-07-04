@@ -24,6 +24,14 @@ class GlobalState {
 
 }
 
+type Bet = {
+    userAddress: PublicKey,
+    betSolAmountAfterTax: BN,
+    guessedMcapSol: BN,
+    placedAt: number,
+    taxBpsApplied: number,
+}
+
 type Round = {
     tokenMint: PublicKey,
     startTime: number,
@@ -64,20 +72,22 @@ class RoundManager {
         return this.rounds[roundId]
     }
 
-    placeBet(roundId: number, user: PublicKey, betSolAmount: BN, guessedMcapSol: BN) {
+    placeBet(roundId: number, user: PublicKey, betSolAmountAfterTax: BN, guessedMcapSol: BN) {
         const round = this.getRound(roundId);
         if (!round) throw new Error("Round not found")
 
+        const now = Math.floor(Date.now() / 1000)
+        if (now > round.endTime) throw new Error("Betting closed")
+
+        const bet: Bet = {
+            userAddress: user,
+            betSolAmountAfterTax: betSolAmountAfterTax,
+            guessedMcapSol: guessedMcapSol,
+            placedAt: now,
+        }
     }
 }
 
-type Bet = {
-    userAddress: PublicKey,
-    betSolAmount: BN,
-    guessedMcapSol: BN,
-    placedAt: number,
-    taxBpsApplied: number,
-}
 
 function main() {
     const state = new GlobalState(
