@@ -88,7 +88,6 @@ class RoundManager {
     }
 }
 
-
 function main() {
     const state = new GlobalState(
         new PublicKey("G87jkGvYEA4vmeAhJe74CZ7LVX9JqdTSWo8mYwGMC19X"),
